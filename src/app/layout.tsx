@@ -1,6 +1,6 @@
 import "./globals.css"
-import { Inter } from "next/font/google"
 import type { Metadata, Viewport } from "next"
+import { Inter } from "next/font/google"
 import Header, { sitePadding } from "@/components/header/Header"
 import Footer from "@/components/Footer"
 
@@ -10,15 +10,13 @@ const inter = Inter({
   variable: "--font-inter"
 })
 
-/* FULL METADATA (ripristinato) */
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.robertochef.com"),
   title: {
     default: "Private Chef & Cooking Classes in Italy | Roberto Chef",
     template: "%s | Roberto Chef"
   },
-  description:
-    "Experience a private chef at your home or join exclusive Italian cooking classes. Passion, flavor, and style by Roberto Chef.",
+  description: "Experience a private chef at your home or join exclusive Italian cooking classes. Passion, flavor, and style by Roberto Chef.",
   applicationName: "Roberto Chef",
   generator: "Next.js 15",
   authors: [{ name: "Roberto Chef", url: "https://www.robertochef.com" }],
@@ -26,7 +24,6 @@ export const metadata: Metadata = {
     "private chef",
     "Italian cooking classes",
     "Tuscan cuisine",
-    "chef at home",
     "Roberto Chef"
   ],
   category: "food",
@@ -37,8 +34,7 @@ export const metadata: Metadata = {
     url: "https://www.robertochef.com",
     siteName: "Roberto Chef",
     title: "Roberto Chef",
-    description:
-      "Experience a private chef at your home or join exclusive Italian cooking classes. Passion, flavor, and style by Roberto Chef.",
+    description: "Experience a private chef at your home or join exclusive Italian cooking classes. Passion, flavor, and style by Roberto Chef.",
     images: [
       {
         url: "/pizza-preparation1.jpeg",
@@ -51,8 +47,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Roberto Chef",
-    description:
-      "Experience a private chef at your home or join exclusive Italian cooking classes. Passion, flavor, and style by Roberto Chef.",
+    description: "Experience a private chef at your home or join exclusive Italian cooking classes. Passion, flavor, and style by Roberto Chef.",
     images: ["/pizza-preparation1.jpeg"]
   },
   icons: {
@@ -76,28 +71,25 @@ export const viewport: Viewport = {
   ]
 }
 
-/* Altezza header (se cambi padding / height del componente aggiorna qui) */
 const HEADER_H = 64
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={inter.variable}>
-      <body className={`${inter.className} bg-black text-white`}>
+      <body className={`${inter.className} bg-black text-white antialiased`}>
         <Header />
         <main className={`relative ${sitePadding}`} style={{ paddingTop: HEADER_H }}>
-          {/* COMING SOON PLACEHOLDER */}
-            <div
-              className="flex flex-col items-center justify-center mx-auto text-center"
-              style={{ minHeight: `calc(100vh - ${HEADER_H}px)` }}
-            >
-              <h1 className="font-black tracking-tight text-white text-5xl md:text-6xl lg:text-7xl xl:text-8xl">
-                SOMETHING SPECIAL IS COMING...
-              </h1>
-              <p className="mt-8 max-w-xl text-white/70 text-lg md:text-xl font-light">
-                We are crafting an elevated culinary experience. Stay tuned.
-              </p>
-            </div>
-          {/* Slot per contenuto futuro */}
+          <div
+            className="flex flex-col items-center justify-center mx-auto text-center"
+            style={{ minHeight: `calc(100vh - ${HEADER_H}px)` }}
+          >
+            <h1 className="font-black tracking-tight text-white text-5xl md:text-6xl lg:text-7xl xl:text-8xl">
+              SOMETHING SPECIAL IS COMING...
+            </h1>
+            <p className="mt-8 max-w-xl text-white/70 text-lg md:text-xl font-light">
+              We are crafting an elevated culinary experience. Stay tuned.
+            </p>
+          </div>
           {children}
         </main>
         <Footer />
