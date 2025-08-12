@@ -1,51 +1,50 @@
-import React, { useState, useRef } from 'react'
+import React, { useState } from "react"
 
-export type GlassCardProps = React.PropsWithChildren<{
-  className?: string
-  style?: React.CSSProperties
-  as?: 'div' | 'button' | 'a'
-  onClick?: React.MouseEventHandler
-}>
+export interface GlassCardProps extends React.HTMLAttributes<HTMLDivElement> {
+  children: React.ReactNode
+  clickableScale?: boolean // se vuoi disattivare l'effetto click
+}
 
-export default function GlassCard({ children, className = '', style, as = 'div', ...rest }: GlassCardProps) {
-  const [isClicked, setIsClicked] = useState(false)
-  const isAnimating = useRef(false)
-  const Tag: any = as
+export default function GlassCard({
+  children,
+  className = "",
+  style,
+  onClick,
+  clickableScale = true,
+  ...rest
+}: GlassCardProps) {
+  const [pressed, setPressed] = useState(false)
 
   const baseStyle: React.CSSProperties = {
-    background: 'rgba(255,255,255,0.07)',
+    background: "rgba(255,255,255,0.07)",
     borderRadius: 32,
-    boxShadow: '3px 3px 35px 16px rgba(79,76,76,0.24), inset 1px 1px 5px -1px rgba(255,255,255,0.5)',
-    backdropFilter: 'blur(8px)',
-    WebkitBackdropFilter: 'blur(8px)',
-    border: '1px solid rgba(255,255,255,0.06)',
-    color: 'white',
-    transform: isClicked ? 'scale(1.05)' : 'scale(1)',
-    transition: 'transform 150ms ease-in-out',
+    boxShadow:
+      "3px 3px 35px 16px rgba(79,76,76,0.24), inset 1px 1px 5px -1px rgba(255,255,255,0.5)",
+    backdropFilter: "blur(8px)",
+    WebkitBackdropFilter: "blur(8px)",
+    border: "1px solid rgba(255,255,255,0.06)",
+    color: "white",
+    transition: "transform 140ms ease",
+    transform: pressed && clickableScale ? "scale(1.05)" : "scale(1)",
+    ...style
   }
 
-  const handleClick = (e: React.MouseEvent) => {
-    if (isAnimating.current) return // blocca nuovi click se animazione in corso
-
-    isAnimating.current = true
-    setIsClicked(true)
-
-    setTimeout(() => {
-      setIsClicked(false)
-      isAnimating.current = false
-    }, 150)
-
-    if (rest.onClick) rest.onClick(e)
+  const handleClick: React.MouseEventHandler<HTMLDivElement> = e => {
+    if (clickableScale) {
+      setPressed(true)
+      setTimeout(() => setPressed(false), 140)
+    }
+    onClick?.(e)
   }
 
   return (
-    <Tag
-      style={{ ...baseStyle, ...style }}
+    <div
+      style={baseStyle}
       className={`select-none rounded-[32px] overflow-hidden ${className}`}
       onClick={handleClick}
       {...rest}
     >
       {children}
-    </Tag>
+    </div>
   )
 }
