@@ -11,7 +11,6 @@ import NavigationLinks from "./NavigationLinks"
 import { useNavigation } from "@/hooks/useNavigation"
 import { useOutsideClick } from "@/hooks/useOutsideClick"
 
-// Padding responsive
 export const sitePadding =
   "px-7 sm:px-10 md:px-14 lg:px-20 xl:px-[var(--fluid-pad)]"
 
@@ -53,14 +52,13 @@ export default function Header() {
       {/* MOBILE */}
       <div className="relative flex w-full items-center justify-between md:hidden py-1.5">
         <MobileMenu
-            isOpen={isMenuOpen}
-            setIsOpen={setIsMenuOpen}
-            buttonRef={menuButtonRef}
-            boxRef={menuBoxRef}
-            isActive={isActive}
+          isOpen={isMenuOpen}
+          setIsOpen={setIsMenuOpen}
+          buttonRef={menuButtonRef}
+          boxRef={menuBoxRef}
+          isActive={isActive}
         />
 
-        {/* Logo mobile centrato che scompare quando menu o cart aperti */}
         <Link href="/" aria-label="Home" className={mobileLogoClasses}>
           <Logo className="h-11 w-auto" />
         </Link>

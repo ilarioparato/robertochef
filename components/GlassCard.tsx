@@ -2,7 +2,7 @@ import React, { useState } from "react"
 
 export interface GlassCardProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode
-  clickableScale?: boolean // se vuoi disattivare l'effetto click
+  clickableScale?: boolean
 }
 
 export default function GlassCard({
