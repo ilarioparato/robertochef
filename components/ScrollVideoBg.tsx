@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useRef } from "react"
+import { useEffect, useRef, useState } from "react"
 
 type Props = {
   srcMp4: string
@@ -14,46 +14,83 @@ function hasFastSeek(v: HTMLVideoElement): v is Required<VideoWithFastSeek> {
   return "fastSeek" in v && typeof (v as { fastSeek?: unknown }).fastSeek === "function"
 }
 
+type VideoRVFC = HTMLVideoElement & {
+  requestVideoFrameCallback?: (cb: () => void) => number
+}
+
 export default function ScrollVideoBg({ srcMp4, srcWebm, poster, topOverlay }: Props) {
   const videoRef = useRef<HTMLVideoElement | null>(null)
   const durationRef = useRef(0)
   const targetTimeRef = useRef(0)
   const rafRef = useRef<number | null>(null)
   const readyRef = useRef(false)
+  const paintedRef = useRef(false)
+  const [painted, setPainted] = useState(false)
 
+  // Setup + prime iOS
   useEffect(() => {
     const v = videoRef.current
     if (!v) return
+
+    v.muted = true
+    v.playsInline = true
+    v.setAttribute("playsinline", "")
+    v.setAttribute("webkit-playsinline", "")
+    v.setAttribute("muted", "")
 
     const onLoaded = () => {
       durationRef.current = v.duration || 0
-      readyRef.current = durationRef.current > 0
-      try {
-        v.currentTime = 0.001 // forza primo frame (toglie il poster su alcuni browser)
-      } catch {}
     }
+
+    const onCanPlay = async () => {
+      try {
+        // Prime: play+pause per sbloccare la decodifica su iOS
+        await v.play()
+        v.pause()
+        v.currentTime = 0.001
+      } catch {}
+      readyRef.current = true
+    }
+
+    const onError = () => {
+      readyRef.current = false
+      paintedRef.current = false
+      setPainted(false)
+    }
+
     v.addEventListener("loadedmetadata", onLoaded)
-    return () => v.removeEventListener("loadedmetadata", onLoaded)
+    v.addEventListener("canplay", onCanPlay)
+    v.addEventListener("error", onError)
+
+    // Prime anche alla prima interazione (fallback iOS)
+    const primeOnFirstTouch = async () => {
+      try {
+        await v.play()
+        v.pause()
+        v.currentTime = Math.max(0.001, v.currentTime)
+        readyRef.current = true
+      } catch {}
+      window.removeEventListener("touchstart", primeOnFirstTouch, { capture: false } as any)
+    }
+    window.addEventListener("touchstart", primeOnFirstTouch, { passive: true })
+
+    return () => {
+      v.removeEventListener("loadedmetadata", onLoaded)
+      v.removeEventListener("canplay", onCanPlay)
+      v.removeEventListener("error", onError)
+      window.removeEventListener("touchstart", primeOnFirstTouch as any)
+    }
   }, [])
 
+  // Scroll sync
   useEffect(() => {
-    const v = videoRef.current
-    if (!v) return
-
-    v.pause()
-    v.muted = true
-
-    const prefersReduce =
-      typeof window !== "undefined" &&
-      window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches
+    const prefersReduce = window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches
     if (prefersReduce) return
 
     const step = () => {
-      const vid = videoRef.current
-      if (!vid) {
-        rafRef.current = null
-        return
-      }
+      const vid = videoRef.current as (HTMLVideoElement & VideoRVFC) | null
+      if (!vid) { rafRef.current = null; return }
+
       const target = targetTimeRef.current
       const current = vid.currentTime
       const delta = target - current
@@ -62,6 +99,21 @@ export default function ScrollVideoBg({ srcMp4, srcWebm, poster, topOverlay }: P
         vid.fastSeek(target)
       } else {
         vid.currentTime = current + delta * 0.22
+      }
+
+      // segna primo frame disegnato
+      if (!paintedRef.current) {
+        if (vid.requestVideoFrameCallback) {
+          vid.requestVideoFrameCallback(() => {
+            if (!paintedRef.current) {
+              paintedRef.current = true
+              setPainted(true)
+            }
+          })
+        } else if (Math.abs(target - vid.currentTime) < 0.05) {
+          paintedRef.current = true
+          setPainted(true)
+        }
       }
 
       if (Math.abs(target - vid.currentTime) > 0.02) {
@@ -97,17 +149,27 @@ export default function ScrollVideoBg({ srcMp4, srcWebm, poster, topOverlay }: P
 
   return (
     <div className="fixed inset-0 z-0 pointer-events-none">
+      {/* Poster overlay finché non disegna il primo frame */}
+      {poster && (
+        <div
+          aria-hidden
+          className={`absolute inset-0 bg-center bg-cover transition-opacity duration-300 ${painted ? "opacity-0" : "opacity-100"}`}
+          style={{ backgroundImage: `url(${poster})` }}
+        />
+      )}
+
       <video
         ref={videoRef}
-        className="absolute inset-0 w-full h-full object-cover transform-gpu scale-[1.01]"
+        className="absolute inset-0 w-full h-full object-cover object-center"
         preload="auto"
-        playsInline
         muted
+        playsInline
         poster={poster}
       >
         {srcWebm && <source src={srcWebm} type="video/webm" />}
         <source src={srcMp4} type="video/mp4" />
       </video>
+
       {topOverlay}
     </div>
   )

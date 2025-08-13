@@ -23,10 +23,10 @@ export default function GlassCard({
   const BaseTag = as
 
   const baseStyle: React.CSSProperties = {
-    background: "rgba(255,255,255,0.07)",
+    background: "rgba(255, 255, 255, 0.03)",
     borderRadius: 32,
     boxShadow:
-      "3px 3px 35px 16px rgba(79,76,76,0.24), inset 1px 1px 5px -1px rgba(255,255,255,0.5)",
+      "3px 3px 35px 8px rgba(79,76,76,0.24), inset 1px 1px 5px -1px rgba(255,255,255,0.5)",
     backdropFilter: "blur(8px)",
     WebkitBackdropFilter: "blur(8px)",
     border: "1px solid rgba(255,255,255,0.06)",
