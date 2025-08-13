@@ -44,7 +44,6 @@ export default function ScrollVideoBg({ srcMp4, srcWebm, poster, topOverlay }: P
 
     const onCanPlay = async () => {
       try {
-        // Prime: play+pause per sbloccare la decodifica su iOS
         await v.play()
         v.pause()
         v.currentTime = 0.001
@@ -62,23 +61,29 @@ export default function ScrollVideoBg({ srcMp4, srcWebm, poster, topOverlay }: P
     v.addEventListener("canplay", onCanPlay)
     v.addEventListener("error", onError)
 
-    // Prime anche alla prima interazione (fallback iOS)
-    const primeOnFirstTouch = async () => {
-      try {
-        await v.play()
-        v.pause()
-        v.currentTime = Math.max(0.001, v.currentTime)
-        readyRef.current = true
-      } catch {}
-      window.removeEventListener("touchstart", primeOnFirstTouch, { capture: false } as any)
+    // Prime anche alla prima interazione (fallback iOS) con listener tipizzato
+    const touchOptions: AddEventListenerOptions = { passive: true, capture: false }
+    const primeOnFirstTouch = (e: Event): void => {
+      const vv = videoRef.current
+      if (!vv) return
+      void (async () => {
+        try {
+          await vv.play()
+          vv.pause()
+          vv.currentTime = Math.max(0.001, vv.currentTime)
+          readyRef.current = true
+        } catch {}
+      })()
+      // una sola volta
+      window.removeEventListener("touchstart", primeOnFirstTouch, touchOptions)
     }
-    window.addEventListener("touchstart", primeOnFirstTouch, { passive: true })
+    window.addEventListener("touchstart", primeOnFirstTouch, touchOptions)
 
     return () => {
       v.removeEventListener("loadedmetadata", onLoaded)
       v.removeEventListener("canplay", onCanPlay)
       v.removeEventListener("error", onError)
-      window.removeEventListener("touchstart", primeOnFirstTouch as any)
+      window.removeEventListener("touchstart", primeOnFirstTouch, touchOptions)
     }
   }, [])
 
@@ -101,7 +106,6 @@ export default function ScrollVideoBg({ srcMp4, srcWebm, poster, topOverlay }: P
         vid.currentTime = current + delta * 0.22
       }
 
-      // segna primo frame disegnato
       if (!paintedRef.current) {
         if (vid.requestVideoFrameCallback) {
           vid.requestVideoFrameCallback(() => {
