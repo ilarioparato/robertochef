@@ -1,18 +1,20 @@
-import { RefObject, useEffect } from "react"
+import { useEffect } from "react"
 
-interface UseOutsideClickProps {
-  isCartOpen: boolean;
-  isMenuOpen: boolean;
-  setIsCartOpen: (isOpen: boolean) => void;
-  setIsMenuOpen: (isOpen: boolean) => void;
-  refs: {
-    desktopCartButtonRef: RefObject<HTMLButtonElement>;
-    desktopCartBoxRef: RefObject<HTMLDivElement>;
-    mobileCartButtonRef: RefObject<HTMLButtonElement>;
-    mobileCartBoxRef: RefObject<HTMLDivElement>;
-    menuButtonRef: RefObject<HTMLButtonElement>;
-    menuBoxRef: RefObject<HTMLDivElement>;
-  };
+interface OutsideClickRefs {
+  desktopCartButtonRef: React.RefObject<HTMLButtonElement | null>
+  desktopCartBoxRef: React.RefObject<HTMLDivElement | null>
+  mobileCartButtonRef: React.RefObject<HTMLButtonElement | null>
+  mobileCartBoxRef: React.RefObject<HTMLDivElement | null>
+  menuButtonRef: React.RefObject<HTMLButtonElement | null>
+  menuBoxRef: React.RefObject<HTMLDivElement | null>
+}
+
+interface UseOutsideClickParams {
+  isCartOpen: boolean
+  isMenuOpen: boolean
+  setIsCartOpen: React.Dispatch<React.SetStateAction<boolean>>
+  setIsMenuOpen: React.Dispatch<React.SetStateAction<boolean>>
+  refs: OutsideClickRefs
 }
 
 export function useOutsideClick({
@@ -21,29 +23,33 @@ export function useOutsideClick({
   setIsCartOpen,
   setIsMenuOpen,
   refs
-}: UseOutsideClickProps) {
+}: UseOutsideClickParams) {
   useEffect(() => {
-    if (!isCartOpen && !isMenuOpen) return;
-    
-    const handleClickOutside = (event: MouseEvent) => {
-      // Gestione per il carrello
-      if (isCartOpen && 
-          !(refs.desktopCartBoxRef.current?.contains(event.target as Node) || 
-            refs.desktopCartButtonRef.current?.contains(event.target as Node) ||
-            refs.mobileCartBoxRef.current?.contains(event.target as Node) ||
-            refs.mobileCartButtonRef.current?.contains(event.target as Node))) {
-        setIsCartOpen(false);
-      }
-      
-      // Gestione per il menu
-      if (isMenuOpen && 
-          !(refs.menuBoxRef.current?.contains(event.target as Node) || 
-            refs.menuButtonRef.current?.contains(event.target as Node))) {
-        setIsMenuOpen(false);
+    function handle(e: MouseEvent) {
+      const target = e.target as Node
+      const {
+        desktopCartButtonRef,
+        desktopCartBoxRef,
+        mobileCartButtonRef,
+        mobileCartBoxRef,
+        menuButtonRef,
+        menuBoxRef
+      } = refs
+
+      const inside =
+        desktopCartButtonRef.current?.contains(target) ||
+        desktopCartBoxRef.current?.contains(target) ||
+        mobileCartButtonRef.current?.contains(target) ||
+        mobileCartBoxRef.current?.contains(target) ||
+        menuButtonRef.current?.contains(target) ||
+        menuBoxRef.current?.contains(target)
+
+      if (!inside) {
+        if (isCartOpen) setIsCartOpen(false)
+        if (isMenuOpen) setIsMenuOpen(false)
       }
     }
-    
-    document.addEventListener("mousedown", handleClickOutside)
-    return () => document.removeEventListener("mousedown", handleClickOutside)
-  }, [isCartOpen, isMenuOpen, refs, setIsCartOpen, setIsMenuOpen])
+    document.addEventListener("mousedown", handle)
+    return () => document.removeEventListener("mousedown", handle)
+  }, [isCartOpen, isMenuOpen, setIsCartOpen, setIsMenuOpen, refs])
 }

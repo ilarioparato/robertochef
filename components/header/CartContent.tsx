@@ -19,7 +19,7 @@ export default function CartContent({ variant, onClick }: CartContentProps) {
       <div className="px-2 pb-1" onClick={onClick}>
         <Link href="/booking" onClick={onClick}>
           <GlassCard className="py-2.5 px-3 text-center hover:bg-white/10 transition-colors cursor-pointer">
-            <span className="text-sm font-medium">Book Now</span>
+            <span className="text-lg font-bold">Book Now</span>
           </GlassCard>
         </Link>
       </div>

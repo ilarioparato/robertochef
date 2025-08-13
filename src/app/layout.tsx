@@ -1,7 +1,7 @@
 import "./globals.css"
 import type { Metadata, Viewport } from "next"
 import { Inter } from "next/font/google"
-import Header, { sitePadding } from "@/components/header/Header"
+import Header from "@/components/header/Header"
 import Footer from "@/components/Footer"
 
 const inter = Inter({
@@ -71,25 +71,14 @@ export const viewport: Viewport = {
   ]
 }
 
-const HEADER_H = 64
-
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+  const SITE_PADDING =
+  "px-7 sm:px-10 md:px-14 lg:px-20 xl:px-[var(--fluid-pad)]"
   return (
     <html lang="en" className={inter.variable}>
       <body className={`${inter.className} bg-black text-white antialiased`}>
-        <Header />
-        <main className={`relative ${sitePadding}`} style={{ paddingTop: HEADER_H }}>
-          <div
-            className="flex flex-col items-center justify-center mx-auto text-center"
-            style={{ minHeight: `calc(100vh - ${HEADER_H}px)` }}
-          >
-            <h1 className="font-black tracking-tight text-white text-5xl md:text-6xl lg:text-7xl xl:text-8xl">
-              SOMETHING SPECIAL IS COMING...
-            </h1>
-            <p className="mt-8 max-w-xl text-white/70 text-lg md:text-xl font-light">
-              We are crafting an elevated culinary experience. Stay tuned.
-            </p>
-          </div>
+        <Header/>
+        <main >
           {children}
         </main>
         <Footer />

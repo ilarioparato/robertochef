@@ -21,7 +21,7 @@ export default function NavigationLinks({ isActive, variant, onClick }: Navigati
     if (variant === "desktop") {
       return `transition-transform hover:scale-105 ${
         isActive(path) 
-          ? "font-semibold text-[1.05rem]" 
+          ? "font-black text-[1.05rem]" 
           : "font-light"
       }`
     } else {

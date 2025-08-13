@@ -2,19 +2,13 @@
 
 import { useRef, useEffect, useState, forwardRef } from "react"
 import GlassCard from "@/components/GlassCard"
-import { sitePadding } from "@/components/header/Header"
 import Link from "next/link"
 import ChevronRight from "@/components/icons/ChevronRight"
+import { SITE_PADDING } from "./constants"
 
-// Layout (layout.tsx) già mostra il blocco "COMING SOON".
-// Page minimale per il deploy attuale.
 export default function Home() {
-  return null
-  // Quando vuoi riattivare le sezioni scroll:
-  // return <ScrollSections />
+  return <ScrollSections />
 }
-
-/* ================== SEZIONI SCROLL (DISATTIVATE) ================== */
 
 function ScrollSections() {
   const section1Ref = useRef<HTMLDivElement>(null)
@@ -22,38 +16,41 @@ function ScrollSections() {
   const section3Ref = useRef<HTMLDivElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
 
-  const [lastSection1Position, setLastSection1Position] = useState(0)
+  const [lastSection1Scroll, setLastSection1Scroll] = useState(0)
   const [currentSection, setCurrentSection] = useState(0)
 
   useEffect(() => {
     const el = containerRef.current
     if (!el) return
-    const onScroll = () => {
+    const handleScroll = () => {
       const top = el.scrollTop
       const h1 = section1Ref.current?.offsetHeight || 0
       if (top < h1) {
-        setLastSection1Position(top)
+        setLastSection1Scroll(top)
         setCurrentSection(0)
       } else {
         const h2 = section2Ref.current?.offsetHeight || 0
         setCurrentSection(top < h1 + h2 ? 1 : 2)
       }
     }
-    el.addEventListener("scroll", onScroll)
-    return () => el.removeEventListener("scroll", onScroll)
+    el.addEventListener("scroll", handleScroll)
+    return () => el.removeEventListener("scroll", handleScroll)
   }, [])
 
   useEffect(() => {
-    if (currentSection === 0 && lastSection1Position > 0) {
+    if (currentSection === 0 && lastSection1Scroll > 0) {
       const t = setTimeout(() => {
-        containerRef.current?.scrollTo({ top: lastSection1Position, behavior: "auto" })
-      }, 50)
+        containerRef.current?.scrollTo({ top: lastSection1Scroll, behavior: "auto" })
+      }, 40)
       return () => clearTimeout(t)
     }
-  }, [currentSection, lastSection1Position])
+  }, [currentSection, lastSection1Scroll])
 
   return (
-    <div ref={containerRef} className="fixed inset-0 overflow-y-auto snap-y snap-proximity">
+    <div
+      ref={containerRef}
+      className="fixed inset-0 overflow-y-auto snap-y snap-proximity"
+    >
       <Section1 ref={section1Ref} />
       <Section2 ref={section2Ref} />
       <Section3 ref={section3Ref} />
@@ -64,19 +61,19 @@ function ScrollSections() {
 const Section1 = forwardRef<HTMLDivElement>((_, ref) => (
   <section
     ref={ref}
-    className={`min-h-screen xl:h-screen w-full bg-black flex flex-col items-start justify-start pt-24 md:pt-32 pb-44 md:pb-52 xl:pb-56 snap-start ${sitePadding}`}
+    className={`snap-start min-h-screen xl:h-screen w-full bg-black flex flex-col items-start justify-start
+      ${SITE_PADDING} pt-32 md:pt-36 pb-32 md:pb-40 xl:pb-48`}
   >
     <h1 className="text-5xl md:text-6xl lg:text-7xl font-black text-white">
       Cook, learn, taste.
     </h1>
-
     <div className="w-full mt-14 md:mt-20 lg:mt-24">
       <CardGrid
         items={[
           { label: "Pasta", href: "/classes" },
-            { label: "Desserts", href: "/classes" },
-            { label: "Pizza", href: "/classes" },
-            { label: "Meat", href: "/classes" }
+          { label: "Desserts", href: "/classes" },
+          { label: "Pizza", href: "/classes" },
+          { label: "Meat", href: "/classes" }
         ]}
       />
     </div>
@@ -84,20 +81,37 @@ const Section1 = forwardRef<HTMLDivElement>((_, ref) => (
 ))
 Section1.displayName = "Section1"
 
+const Section2 = forwardRef<HTMLDivElement>((_, ref) => (
+  <section
+    ref={ref}
+    className={`snap-start min-h-screen md:h-screen w-full flex flex-col items-center justify-center bg-blue-400 ${SITE_PADDING}`}
+  >
+    <h2 className="text-4xl md:text-6xl font-bold text-white">Sezione 2</h2>
+  </section>
+))
+Section2.displayName = "Section2"
+
+const Section3 = forwardRef<HTMLDivElement>((_, ref) => (
+  <section
+    ref={ref}
+    className={`snap-start min-h-screen md:h-screen w-full flex flex-col items-center justify-center bg-pink-400 ${SITE_PADDING}`}
+  >
+    <h2 className="text-4xl md:text-6xl font-bold">Sezione 3</h2>
+  </section>
+))
+Section3.displayName = "Section3"
+
 interface CardGridProps {
   items: { label: string; href: string }[]
 }
-
-interface VarsStyle extends React.CSSProperties {
-  "--card-gap"?: string
-}
+interface VarsStyle extends React.CSSProperties { "--card-gap"?: string }
 
 function CardGrid({ items }: CardGridProps) {
   const style: VarsStyle = { "--card-gap": "1.75rem" }
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 w-full" style={style}>
-      {items.map(i => (
-        <CardItem key={i.label} label={i.label} href={i.href} />
+      {items.map(it => (
+        <CardItem key={it.label} label={it.label} href={it.href} />
       ))}
     </div>
   )
@@ -111,14 +125,12 @@ function CardItem({ label, href }: { label: string; href: string }) {
           <span className="text-[1.9rem] md:text-[2.3rem] lg:text-[2.5rem] font-black leading-[1.05] text-white">
             {label}
           </span>
-          <span className="text-sm md:text-base font-thin text-white">
-            experience class
-          </span>
+          <span className="text-sm md:text-base font-thin text-white">experience class</span>
         </div>
         <div className="absolute bottom-4 right-4">
-          <Link href={href} aria-label={`Go to ${label} class`}>
-            <GlassCard className="rounded-full w-12 h-8 flex items-center justify-center cursor-pointer transition-transform hover:scale-105">
-              <ChevronRight size={20} color="white" />
+          <Link href={href} aria-label={`Go to ${label} experience class`}>
+            <GlassCard className="rounded-full w-18 h-11 flex items-center justify-center cursor-pointer transition-transform hover:scale-105">
+              <ChevronRight size={30} color="white" />
             </GlassCard>
           </Link>
         </div>
@@ -126,23 +138,3 @@ function CardItem({ label, href }: { label: string; href: string }) {
     </div>
   )
 }
-
-const Section2 = forwardRef<HTMLDivElement>((_, ref) => (
-  <section
-    ref={ref}
-    className={`min-h-screen md:h-screen w-full bg-blue-400 flex flex-col items-center justify-center snap-start ${sitePadding}`}
-  >
-    <h2 className="text-4xl md:text-6xl font-bold text-white">Sezione 2</h2>
-  </section>
-))
-Section2.displayName = "Section2"
-
-const Section3 = forwardRef<HTMLDivElement>((_, ref) => (
-  <section
-    ref={ref}
-    className={`min-h-screen md:h-screen w-full bg-pink-400 flex flex-col items-center justify-center snap-start ${sitePadding}`}
-  >
-    <h2 className="text-4xl md:text-6xl font-bold">Sezione 3</h2>
-  </section>
-))
-Section3.displayName = "Section3"

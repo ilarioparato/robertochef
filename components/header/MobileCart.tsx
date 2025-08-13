@@ -6,11 +6,10 @@ import CartContent from "./CartContent"
 
 interface MobileCartProps {
   isOpen: boolean
-  setIsOpen: (isOpen: boolean) => void
-  buttonRef: React.RefObject<HTMLButtonElement>
-  boxRef: React.RefObject<HTMLDivElement>
+  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>
+  buttonRef: React.RefObject<HTMLButtonElement | null>
+  boxRef: React.RefObject<HTMLDivElement | null>
 }
-
 export default function MobileCart({ isOpen, setIsOpen, buttonRef, boxRef }: MobileCartProps) {
   const [warmed, setWarmed] = useState(false)
 

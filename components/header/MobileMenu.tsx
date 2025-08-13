@@ -6,12 +6,11 @@ import NavigationLinks from "./NavigationLinks"
 
 interface MobileMenuProps {
   isOpen: boolean
-  setIsOpen: (isOpen: boolean) => void
-  buttonRef: React.RefObject<HTMLButtonElement>
-  boxRef: React.RefObject<HTMLDivElement>
+  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>
+  buttonRef: React.RefObject<HTMLButtonElement | null>
+  boxRef: React.RefObject<HTMLDivElement | null>
   isActive: (path: string) => boolean
 }
-
 export default function MobileMenu({ isOpen, setIsOpen, buttonRef, boxRef, isActive }: MobileMenuProps) {
   const [warmed, setWarmed] = useState(false)
 

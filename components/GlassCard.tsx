@@ -1,51 +1,59 @@
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef } from "react"
 
-export type GlassCardProps = React.PropsWithChildren<{
+type AsTag = "div" | "button" | "a"
+
+export type GlassCardProps = {
+  as?: AsTag
   className?: string
   style?: React.CSSProperties
-  as?: 'div' | 'button' | 'a'
   onClick?: React.MouseEventHandler
-}>
+  children?: React.ReactNode
+}
 
-export default function GlassCard({ children, className = '', style, as = 'div', ...rest }: GlassCardProps) {
-  const [isClicked, setIsClicked] = useState(false)
-  const isAnimating = useRef(false)
-  const Tag: any = as
+export default function GlassCard({
+  as = "div",
+  className = "",
+  style,
+  onClick,
+  children
+}: GlassCardProps) {
+  const [pressed, setPressed] = useState(false)
+  const animating = useRef(false)
+
+  const BaseTag = as
 
   const baseStyle: React.CSSProperties = {
-    background: 'rgba(255,255,255,0.07)',
+    background: "rgba(255,255,255,0.07)",
     borderRadius: 32,
-    boxShadow: '3px 3px 35px 16px rgba(79,76,76,0.24), inset 1px 1px 5px -1px rgba(255,255,255,0.5)',
-    backdropFilter: 'blur(8px)',
-    WebkitBackdropFilter: 'blur(8px)',
-    border: '1px solid rgba(255,255,255,0.06)',
-    color: 'white',
-    transform: isClicked ? 'scale(1.05)' : 'scale(1)',
-    transition: 'transform 150ms ease-in-out',
+    boxShadow:
+      "3px 3px 35px 16px rgba(79,76,76,0.24), inset 1px 1px 5px -1px rgba(255,255,255,0.5)",
+    backdropFilter: "blur(8px)",
+    WebkitBackdropFilter: "blur(8px)",
+    border: "1px solid rgba(255,255,255,0.06)",
+    color: "white",
+    transform: pressed ? "scale(1.05)" : "scale(1)",
+    transition: "transform 150ms ease-in-out",
+    ...style
   }
 
-  const handleClick = (e: React.MouseEvent) => {
-    if (isAnimating.current) return // blocca nuovi click se animazione in corso
-
-    isAnimating.current = true
-    setIsClicked(true)
-
+  const handleClick: React.MouseEventHandler = e => {
+    if (animating.current) return
+    animating.current = true
+    setPressed(true)
     setTimeout(() => {
-      setIsClicked(false)
-      isAnimating.current = false
+      setPressed(false)
+      animating.current = false
     }, 150)
-
-    if (rest.onClick) rest.onClick(e)
+    onClick?.(e)
   }
 
   return (
-    <Tag
-      style={{ ...baseStyle, ...style }}
+    <BaseTag
+      style={baseStyle}
       className={`select-none rounded-[32px] overflow-hidden ${className}`}
       onClick={handleClick}
-      {...rest}
     >
       {children}
-    </Tag>
+    </BaseTag>
   )
 }

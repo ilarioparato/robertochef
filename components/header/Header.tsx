@@ -10,21 +10,18 @@ import DesktopCart from "./DesktopCart"
 import NavigationLinks from "./NavigationLinks"
 import { useNavigation } from "@/hooks/useNavigation"
 import { useOutsideClick } from "@/hooks/useOutsideClick"
-
-// Padding responsive
-export const sitePadding =
-  "px-7 sm:px-10 md:px-14 lg:px-20 xl:px-[var(--fluid-pad)]"
+import { SITE_PADDING } from "@/src/app/constants"
 
 export default function Header() {
   const [isCartOpen, setIsCartOpen] = useState(false)
   const [isMenuOpen, setIsMenuOpen] = useState(false)
 
-  const desktopCartButtonRef = useRef<HTMLButtonElement>(null)
-  const desktopCartBoxRef = useRef<HTMLDivElement>(null)
-  const mobileCartButtonRef = useRef<HTMLButtonElement>(null)
-  const mobileCartBoxRef = useRef<HTMLDivElement>(null)
-  const menuButtonRef = useRef<HTMLButtonElement>(null)
-  const menuBoxRef = useRef<HTMLDivElement>(null)
+  const desktopCartButtonRef = useRef<HTMLButtonElement | null>(null)
+  const desktopCartBoxRef    = useRef<HTMLDivElement | null>(null)
+  const mobileCartButtonRef  = useRef<HTMLButtonElement | null>(null)
+  const mobileCartBoxRef     = useRef<HTMLDivElement | null>(null)
+  const menuButtonRef        = useRef<HTMLButtonElement | null>(null)
+  const menuBoxRef           = useRef<HTMLDivElement | null>(null)
 
   const { isActive } = useNavigation()
 
@@ -49,7 +46,7 @@ export default function Header() {
     (hideMobileLogo ? "opacity-0 pointer-events-none" : "opacity-100")
 
   return (
-    <header className={`w-full flex items-center justify-between fixed top-0 left-0 right-0 bg-transparent py-3 z-50 ${sitePadding}`}>
+    <header className={`w-full flex items-center justify-between fixed top-0 left-0 right-0 bg-transparent py-3 z-50 ${SITE_PADDING}`}>
       {/* MOBILE */}
       <div className="relative flex w-full items-center justify-between md:hidden py-1.5">
         <MobileMenu
