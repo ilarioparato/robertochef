@@ -51,7 +51,7 @@ function Section1() {
 function Section2() {
   return (
     <section className={`min-h-screen w-full flex flex-col items-center justify-center ${SITE_PADDING}`}>
-      <h2 className="text-4xl md:text-6xl font-bold text-white">Section 2</h2>
+      <h2 className="text-4xl md:text-6xl font-bold text-white"></h2>
     </section>
   )
 }
@@ -59,7 +59,7 @@ function Section2() {
 function Section3() {
   return (
     <section className={`min-h-screen w-full flex flex-col items-center justify-center ${SITE_PADDING}`}>
-      <h2 className="text-4xl md:text-6xl font-bold text-white">Section 3</h2>
+      <h2 className="text-4xl md:text-6xl font-bold text-white"></h2>
     </section>
   )
 }

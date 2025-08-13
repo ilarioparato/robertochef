@@ -9,6 +9,11 @@ type Props = {
   topOverlay?: React.ReactNode
 }
 
+type VideoWithFastSeek = HTMLVideoElement & { fastSeek?: (time: number) => void }
+function hasFastSeek(v: HTMLVideoElement): v is Required<VideoWithFastSeek> {
+  return "fastSeek" in v && typeof (v as { fastSeek?: unknown }).fastSeek === "function"
+}
+
 export default function ScrollVideoBg({ srcMp4, srcWebm, poster, topOverlay }: Props) {
   const videoRef = useRef<HTMLVideoElement | null>(null)
   const durationRef = useRef(0)
@@ -19,10 +24,13 @@ export default function ScrollVideoBg({ srcMp4, srcWebm, poster, topOverlay }: P
   useEffect(() => {
     const v = videoRef.current
     if (!v) return
+
     const onLoaded = () => {
       durationRef.current = v.duration || 0
       readyRef.current = durationRef.current > 0
-      try { v.currentTime = 0.001 } catch {}
+      try {
+        v.currentTime = 0.001 // forza primo frame (toglie il poster su alcuni browser)
+      } catch {}
     }
     v.addEventListener("loadedmetadata", onLoaded)
     return () => v.removeEventListener("loadedmetadata", onLoaded)
@@ -31,21 +39,27 @@ export default function ScrollVideoBg({ srcMp4, srcWebm, poster, topOverlay }: P
   useEffect(() => {
     const v = videoRef.current
     if (!v) return
+
     v.pause()
     v.muted = true
 
-    const prefersReduce = window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches
+    const prefersReduce =
+      typeof window !== "undefined" &&
+      window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches
     if (prefersReduce) return
 
     const step = () => {
       const vid = videoRef.current
-      if (!vid) { rafRef.current = null; return }
+      if (!vid) {
+        rafRef.current = null
+        return
+      }
       const target = targetTimeRef.current
       const current = vid.currentTime
       const delta = target - current
 
-      if (Math.abs(delta) > 0.8 && typeof (vid as any).fastSeek === "function") {
-        ;(vid as any).fastSeek(target)
+      if (Math.abs(delta) > 0.8 && hasFastSeek(vid)) {
+        vid.fastSeek(target)
       } else {
         vid.currentTime = current + delta * 0.22
       }
