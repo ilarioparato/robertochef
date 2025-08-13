@@ -6,6 +6,15 @@ import Link from "next/link"
 import ChevronRight from "@/components/icons/ChevronRight"
 import { SITE_PADDING } from "./constants"
 
+// ...existing code...
+const CARD_DATA = [
+  { label: "Pasta",    href: "/classes", desc: "Learn the art of fresh pasta, from tagliatelle to stuffed ravioli, using genuine ingredients and traditional techniques. A flavorful journey starting right from your hands." },
+  { label: "Desserts", href: "/classes", desc: "Discover the secrets to perfectly cooked meat: marinades, premium cuts, and techniques to enhance flavor and tenderness—just like in a fine dining restaurant." },
+  { label: "Pizza",    href: "/classes", desc: "From custard cream to chocolate delights, learn how to create irresistible desserts with elegant presentation and impeccable taste. The perfect ending to any meal." },
+  { label: "Meat",     href: "/classes", desc: "From dough preparation to oven baking, make the perfect pizza with fresh ingredients and pizzaiolo secrets. Crispy on the outside, soft on the inside—just like in a real pizzeria." }
+]
+// ...existing
+
 export default function Home() {
   return <ScrollSections />
 }
@@ -61,21 +70,19 @@ function ScrollSections() {
 const Section1 = forwardRef<HTMLDivElement>((_, ref) => (
   <section
     ref={ref}
-    className={`snap-start min-h-screen xl:h-screen w-full bg-black flex flex-col items-start justify-start
-      ${SITE_PADDING} pt-32 md:pt-36 pb-32 md:pb-40 xl:pb-48`}
+    className={`snap-start min-h-screen xl:h-screen w-full bg-black flex flex-col ${SITE_PADDING} pt-32 md:pt-36 pb-32 md:pb-40`}
   >
     <h1 className="text-5xl md:text-6xl lg:text-7xl font-black text-white">
       Cook, learn, taste.
     </h1>
-    <div className="w-full mt-14 md:mt-20 lg:mt-24">
-      <CardGrid
-        items={[
-          { label: "Pasta", href: "/classes" },
-          { label: "Desserts", href: "/classes" },
-          { label: "Pizza", href: "/classes" },
-          { label: "Meat", href: "/classes" }
-        ]}
-      />
+
+    {/* GRID CARDS: 4 → 2 → 1, gap uniforme, niente wrapper che schiaccia */}
+    <div className="mt-14 md:mt-20">
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-8">
+        {CARD_DATA.map(c => (
+          <CardItem key={c.label} {...c} />
+        ))}
+      </div>
     </div>
   </section>
 ))
@@ -117,24 +124,44 @@ function CardGrid({ items }: CardGridProps) {
   )
 }
 
-function CardItem({ label, href }: { label: string; href: string }) {
+// ...existing code...
+// ...existing code...
+function CardItem({ label, href, desc }: { label: string; href: string; desc?: string }) {
   return (
-    <div className="relative w-full" style={{ height: "clamp(160px,26vh,240px)" }}>
-      <GlassCard className="w-full h-full flex items-end justify-start p-5 md:p-6">
-        <div className="flex flex-col items-start">
-          <span className="text-[1.9rem] md:text-[2.3rem] lg:text-[2.5rem] font-black leading-[1.05] text-white">
+    <div className="relative w-full" style={{ height: "clamp(440px, 60vh, 580px)" }}>
+      <GlassCard className="absolute inset-0 w-full h-full p-5 md:p-6 overflow-hidden">
+        {/* Titolo: fisso poco prima della metà */}
+        <div className="absolute left-5 md:left-6 right-5 md:right-6 top-[44%] -translate-y-1/2">
+          <span className="block text-5xl md:text-4xl lg:text-[2.8rem] font-black text-white tracking-tight leading-tight">
             {label}
           </span>
-          <span className="text-sm md:text-base font-thin text-white">experience class</span>
         </div>
-        <div className="absolute bottom-4 right-4">
-          <Link href={href} aria-label={`Go to ${label} experience class`}>
-            <GlassCard className="rounded-full w-18 h-11 flex items-center justify-center cursor-pointer transition-transform hover:scale-105">
-              <ChevronRight size={30} color="white" />
-            </GlassCard>
-          </Link>
+
+        {/* Sottotitolo + descrizione: area confinata tra top e bottom */}
+        <div className="absolute left-5 md:left-6 right-5 md:right-6 top-[48%] bottom-20 overflow-hidden">
+          <span className="block text-sm md:text-base font-thin text-white/80">
+            experience class
+          </span>
+          {desc && (
+            <span className="mt-2 block text-sm md:text-base font-regular text-white/80 break-words">
+              {desc}
+            </span>
+          )}
         </div>
+
+        {/* Bottone in basso a destra (spazio riservato con bottom-20 sopra) */}
+        <Link
+          href={href}
+          aria-label={`Go to ${label} experience class`}
+          className="absolute bottom-5 right-5"
+        >
+          <GlassCard className="rounded-full w-16 h-11 flex items-center justify-center cursor-pointer transition-transform hover:scale-105">
+            <ChevronRight size={26} color="white" />
+          </GlassCard>
+        </Link>
       </GlassCard>
     </div>
   )
 }
+// ...existing code...
+// ...existing code...

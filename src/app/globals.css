@@ -1,54 +1,39 @@
 @import "tailwindcss";
 
-
-body 
-{
-  background-color: black;
-  font-family: Arial, Helvetica, sans-serif;
+/* Global base overrides */
+body {
+  background-color: #000000;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  /* Font già gestito dal font loader (Inter). Fallback opzionale: */
+  font-family: var(--font-inter), system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
 
+/* Text selection */
 ::selection {
-  background-color: white;
-  color: black; 
+  background-color: #ffffff;
+  color: #000000;
 }
 
+/* Cart animations */
 @keyframes openCart {
-  0% {
-    transform: scale(0, 0);
-  }
-  50% {
-    transform: scale(1, 0);
-  }
-  100% {
-    transform: scale(1, 1);
-  }
+  0%   { transform: scale(0,0); }
+  50%  { transform: scale(1,0); }
+  100% { transform: scale(1,1); }
 }
-
 @keyframes closeCart {
-  0% {
-    transform: scale(1, 1);
-  }
-  50% {
-    transform: scale(1, 0);
-  }
-  100% {
-    transform: scale(0, 0);
-  }
+  0%   { transform: scale(1,1); }
+  50%  { transform: scale(1,0); }
+  100% { transform: scale(0,0); }
 }
+.openCart  { animation: openCart 300ms ease forwards; }
+.closeCart { animation: closeCart 300ms ease forwards; }
 
-.openCart {
-  animation: openCart 300ms ease forwards;
-}
-
-.closeCart {
-  animation: closeCart 300ms ease forwards;
-}
-
+/* Fluid spacing variable */
 :root {
-  --fluid-pad: clamp(7rem, 10vw, 14rem); /* invariato per xl+ */
+  --fluid-pad: clamp(7rem, 10vw, 14rem);
 }
-
 @media (min-width:1600px){
-  :root { --fluid-pad: clamp(8rem,11vw,16rem); }
+  :root { --fluid-pad: clamp(8rem, 11vw, 16rem); }
 }
 
