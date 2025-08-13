@@ -16,7 +16,7 @@ export const metadata: Metadata = {
     default: "Private Chef & Cooking Classes in Italy | Roberto Chef",
     template: "%s | Roberto Chef"
   },
-  description: "Experience a private chef at your home or join exclusive Italian cooking classes. Passion, flavor, and style by Roberto Chef.",
+  description: "Experience a private chef at your home and join exclusive Italian cooking classes. Passion, flavor, and style by Roberto Chef.",
   applicationName: "Roberto Chef",
   generator: "Next.js 15",
   authors: [{ name: "Roberto Chef", url: "https://www.robertochef.com" }],
@@ -34,10 +34,10 @@ export const metadata: Metadata = {
     url: "https://www.robertochef.com",
     siteName: "Roberto Chef",
     title: "Roberto Chef",
-    description: "Experience a private chef at your home or join exclusive Italian cooking classes. Passion, flavor, and style by Roberto Chef.",
+    description: "Experience a private chef at your home and join exclusive Italian cooking classes. Passion, flavor, and style by Roberto Chef.",
     images: [
       {
-        url: "/pizza-preparation1.jpeg",
+        url: "https://www.robertochef.com/pizza-preparation1.jpeg",
         width: 1200,
         height: 630,
         alt: "Roberto Chef preparing pizza Margherita"
@@ -47,8 +47,8 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Roberto Chef",
-    description: "Experience a private chef at your home or join exclusive Italian cooking classes. Passion, flavor, and style by Roberto Chef.",
-    images: ["/pizza-preparation1.jpeg"]
+    description: "Experience a private chef at your home and join exclusive Italian cooking classes. Passion, flavor, and style by Roberto Chef.",
+    images: ["https://www.robertochef.com/pizza-preparation1.jpeg"]
   },
   icons: {
     icon: [
@@ -72,8 +72,6 @@ export const viewport: Viewport = {
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
-  const SITE_PADDING =
-  "px-7 sm:px-10 md:px-14 lg:px-20 xl:px-[var(--fluid-pad)]"
   return (
     <html lang="en" className={inter.variable}>
       <body className={`${inter.className} bg-black text-white antialiased`}>
