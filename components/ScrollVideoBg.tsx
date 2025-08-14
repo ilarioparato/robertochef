@@ -38,17 +38,28 @@ export default function ScrollVideoBg({ srcMp4, srcWebm, poster, topOverlay }: P
     v.setAttribute("webkit-playsinline", "")
     v.setAttribute("muted", "")
 
-    const onLoaded = () => {
+    // forza parsing dei source
+    v.load()
+
+    const onLoadedMeta = () => {
       durationRef.current = v.duration || 0
     }
 
-    const onCanPlay = async () => {
+    const prime = async () => {
       try {
+        // prime: play+pause (muted) per sbloccare il frame su iOS
         await v.play()
         v.pause()
-        v.currentTime = 0.001
-      } catch {}
-      readyRef.current = true
+        if (v.currentTime < 0.001) v.currentTime = 0.001
+        readyRef.current = true
+      } catch {
+        // se fallisce, sarà sbloccato al primo touchstart
+      }
+    }
+
+    const onLoadedData = () => {
+      // quando ci sono i primi frame decodificati, prova a primare
+      void prime()
     }
 
     const onError = () => {
@@ -57,31 +68,21 @@ export default function ScrollVideoBg({ srcMp4, srcWebm, poster, topOverlay }: P
       setPainted(false)
     }
 
-    v.addEventListener("loadedmetadata", onLoaded)
-    v.addEventListener("canplay", onCanPlay)
+    v.addEventListener("loadedmetadata", onLoadedMeta)
+    v.addEventListener("loadeddata", onLoadedData)
     v.addEventListener("error", onError)
 
-    // Prime anche alla prima interazione (fallback iOS) con listener tipizzato
+    // fallback: prime alla prima interazione (iOS)
     const touchOptions: AddEventListenerOptions = { passive: true, capture: false }
-    const primeOnFirstTouch = (e: Event): void => {
-      const vv = videoRef.current
-      if (!vv) return
-      void (async () => {
-        try {
-          await vv.play()
-          vv.pause()
-          vv.currentTime = Math.max(0.001, vv.currentTime)
-          readyRef.current = true
-        } catch {}
-      })()
-      // una sola volta
+    const primeOnFirstTouch = (): void => {
+      void prime()
       window.removeEventListener("touchstart", primeOnFirstTouch, touchOptions)
     }
     window.addEventListener("touchstart", primeOnFirstTouch, touchOptions)
 
     return () => {
-      v.removeEventListener("loadedmetadata", onLoaded)
-      v.removeEventListener("canplay", onCanPlay)
+      v.removeEventListener("loadedmetadata", onLoadedMeta)
+      v.removeEventListener("loadeddata", onLoadedData)
       v.removeEventListener("error", onError)
       window.removeEventListener("touchstart", primeOnFirstTouch, touchOptions)
     }
@@ -151,23 +152,32 @@ export default function ScrollVideoBg({ srcMp4, srcWebm, poster, topOverlay }: P
     }
   }, [])
 
+// ...existing code...
   return (
-    <div className="fixed inset-0 z-0 pointer-events-none">
-      {/* Poster overlay finché non disegna il primo frame */}
+    <div
+      className="fixed left-0 right-0 top-0 z-0 pointer-events-none"
+      style={{ height: "100dvh" }}
+    >
+      {/* Poster sopra al video finché non dipinge il primo frame */}
       {poster && (
-        <div
+        <img
           aria-hidden
-          className={`absolute inset-0 bg-center bg-cover transition-opacity duration-300 ${painted ? "opacity-0" : "opacity-100"}`}
-          style={{ backgroundImage: `url(${poster})` }}
+          src={poster}
+          alt=""
+          className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${painted ? "opacity-0" : "opacity-100"}`}
+          decoding="async"
+          style={{ height: "100dvh" }}
         />
       )}
 
       <video
         ref={videoRef}
-        className="absolute inset-0 w-full h-full object-cover object-center"
+        className="absolute inset-0 w-full object-cover object-center"
+        style={{ height: "100dvh" }}
         preload="auto"
         muted
         playsInline
+        autoPlay
         poster={poster}
       >
         {srcWebm && <source src={srcWebm} type="video/webm" />}
@@ -177,4 +187,5 @@ export default function ScrollVideoBg({ srcMp4, srcWebm, poster, topOverlay }: P
       {topOverlay}
     </div>
   )
+// ...existing code...
 }

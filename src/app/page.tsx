@@ -7,13 +7,14 @@ import { SITE_PADDING } from "./constants"
 import ScrollVideoBg from "../../components/ScrollVideoBg"
 
 const CARD_DATA = [
-  { label: "Pasta",    href: "/classes", desc: "Fresh handmade pasta techniques." },
-  { label: "Desserts", href: "/classes", desc: "Italian sweets & elegant plating." },
-  { label: "Pizza",    href: "/classes", desc: "High hydration dough & stone baking." },
-  { label: "Meat",     href: "/classes", desc: "Cuts, searing and slow roasting." }
+  { label: "Pasta",    href: "/classes", desc: "Learn the art of fresh pasta, from tagliatelle to stuffed ravioli, using genuine ingredients and traditional techniques. A flavorful journey starting right from your hands." },
+  { label: "Desserts", href: "/classes", desc: "Discover the secrets to perfectly cooked meat: marinades, premium cuts, and techniques to enhance flavor and tenderness—just like in a fine dining restaurant." },
+  { label: "Pizza",    href: "/classes", desc: "From custard cream to chocolate delights, learn how to create irresistible desserts with elegant presentation and impeccable taste. The perfect ending to any meal." },
+  { label: "Meat",     href: "/classes", desc: "From dough preparation to oven baking, make the perfect pizza with fresh ingredients and pizzaiolo secrets. Crispy on the outside, soft on the inside—just like in a real pizzeria." }
 ]
 
 export default function Home() {
+
   return (
     <>
       <ScrollVideoBg
