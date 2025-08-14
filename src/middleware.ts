@@ -14,6 +14,7 @@ export function middleware(req: NextRequest) {
     p.startsWith("/favicon") ||
     p.startsWith("/icon") ||
     p === "/robots.txt" ||
+    p.startsWith("/apple-touch-icon") ||
     p === "/sitemap.xml"
 
   if (allowed) return NextResponse.next()
