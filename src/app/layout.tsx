@@ -3,7 +3,6 @@ import type { Metadata, Viewport } from "next"
 import { Inter } from "next/font/google"
 import Header from "@/components/header/Header"
 import Footer from "@/components/footer/Footer"
-import { useEffect } from "react"
 import ScrollToTop from "@/components/ScrollToTop"
 import { SpeedInsights } from "@vercel/speed-insights/next"
 

@@ -163,7 +163,7 @@ export default function Section3() {
     
     const timer = setTimeout(calculateDimensions, 100);
     return () => clearTimeout(timer);
-  }, []);
+  }, [boxRefs.story, boxRefs.experience, boxRefs.feedback]);
 
 const handleToggle = (section: 'story' | 'experience' | 'feedback') => {
   if (isAnimating) return;

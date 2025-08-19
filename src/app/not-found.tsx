@@ -10,7 +10,7 @@ export default function NotFound() {
       </h1>
       
       <p className="mt-6 text-xl md:text-2xl text-white/70 max-w-md text-center font-light">
-        We couldn't find the pasta you were looking for.
+        We couldn&apos;t find the pasta you were looking for.
       </p>
       
       <div className="mt-12 flex justify-center">

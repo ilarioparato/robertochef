@@ -25,7 +25,7 @@ interface CardItem3Props {
 }
 
 const CardItem3 = forwardRef<HTMLDivElement, CardItem3Props>(
-  ({ id, title, content, index, expandedSection, isAnimating, showContent, isMobile, initialPositions, fixedHeight, onToggle, icon: Icon }, ref) => {
+  ({ id, title, content, index, expandedSection, isMobile, initialPositions, fixedHeight, onToggle, icon: Icon }, ref) => {
     
     const getTransform = () => {
       if (expandedSection !== id) return 'none';
