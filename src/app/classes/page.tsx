@@ -6,5 +6,4 @@ export const metadata = {
 
 export default function Classes()
 {
-    return <div></div>;
 }

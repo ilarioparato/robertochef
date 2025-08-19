@@ -16,16 +16,16 @@ const navigationItems = [
 ]
 
 export default function NavigationLinks({ isActive, variant, onClick }: NavigationLinksProps) {
-  // Stili diversi a seconda del contesto (mobile o desktop)
-  const getStyles = (path: string) => {
+  // Stili di base a seconda del contesto (mobile o desktop)
+  const getBaseStyles = (path: string) => {
     if (variant === "desktop") {
-      return `transition-transform hover:scale-105 ${
+      return `${
         isActive(path) 
           ? "font-black text-[1.05rem]" 
           : "font-light"
       }`
     } else {
-      return `transition-transform hover:scale-105 ${
+      return `${
         isActive(path) 
           ? "font-semibold text-[1.1rem]" 
           : "font-light text-[1rem]"
@@ -43,19 +43,35 @@ export default function NavigationLinks({ isActive, variant, onClick }: Navigati
             )}
             <Link 
               href={item.href} 
-              className={getStyles(item.href)}
               onClick={onClick}
+              className="block group" // Aggiunto group qui
             >
-              {item.label}
+              {/* Contenitore con l'effetto di animazione */}
+              <div className={`relative overflow-hidden ${getBaseStyles(item.href)}`}>
+                <div className="transform transition-transform duration-500 ease-in-out group-hover:-translate-y-full">
+                  {item.label}
+                </div>
+                <div className="absolute top-full left-0 transform transition-transform duration-500 ease-in-out group-hover:-translate-y-full">
+                  {item.label}
+                </div>
+              </div>
             </Link>
           </div>
         ) : (
+          // Versione desktop
           <Link 
-            key={item.href}
+            key={item.href} 
             href={item.href} 
-            className={getStyles(item.href)}
+            className="block group" // Aggiunto group qui
           >
-            {item.label}
+            <div className={`relative overflow-hidden ${getBaseStyles(item.href)}`}>
+              <div className="transform transition-transform duration-500 ease-in-out group-hover:-translate-y-full">
+                {item.label}
+              </div>
+              <div className="absolute top-full left-0 transform transition-transform duration-500 ease-in-out group-hover:-translate-y-full">
+                {item.label}
+              </div>
+            </div>
           </Link>
         )
       ))}

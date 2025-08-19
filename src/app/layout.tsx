@@ -2,7 +2,7 @@ import "./globals.css"
 import type { Metadata, Viewport } from "next"
 import { Inter } from "next/font/google"
 import Header from "@/components/header/Header"
-import Footer from "@/components/Footer"
+import Footer from "@/components/footer/Footer"
 import { useEffect } from "react"
 import ScrollToTop from "@/components/ScrollToTop"
 import { SpeedInsights } from "@vercel/speed-insights/next"
@@ -77,11 +77,11 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`${inter.variable}`} >
-      <body className={`${inter.className} bg-black text-white antialiased`}>
+      <body className={`${inter.className} antialiased`}>
         <SpeedInsights/>
         <Header/>
         <ScrollToTop />
-        <main >
+        <main>
           {children}
         </main>
         <Footer />

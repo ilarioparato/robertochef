@@ -1,7 +1,8 @@
 "use client"
 
-import React, { useState, useRef } from "react"
+import React, { useState, useRef, useEffect } from "react"
 import Link from "next/link"
+import { usePathname } from "next/navigation"
 import Logo from "@/components/icons/Logo"
 import GlassCard from "@/components/GlassCard"
 import MobileMenu from "./MobileMenu"
@@ -24,6 +25,13 @@ export default function Header() {
   const menuBoxRef           = useRef<HTMLDivElement | null>(null)
 
   const { isActive } = useNavigation()
+  const pathname = usePathname()
+  
+  // Chiudi entrambi al cambio pagina
+  useEffect(() => {
+    setIsCartOpen(false)
+    setIsMenuOpen(false)
+  }, [pathname])
 
   useOutsideClick({
     isCartOpen,
@@ -39,11 +47,32 @@ export default function Header() {
       menuBoxRef
     }
   })
+  
+  // Setter modificati per garantire esclusività
+  const setMenuOpenExclusive: React.Dispatch<React.SetStateAction<boolean>> = (value) => {
+    setIsMenuOpen(prev => {
+      const next = typeof value === "function" ? value(prev) : value;
+      if (next) {
+        // Se sto aprendo il menu, chiudo il carrello
+        setIsCartOpen(false);
+      }
+      return next;
+    });
+  };
+  
+  const setCartOpenExclusive: React.Dispatch<React.SetStateAction<boolean>> = (value) => {
+    setIsCartOpen(prev => {
+      const next = typeof value === "function" ? value(prev) : value;
+      if (next) {
+        // Se sto aprendo il carrello, chiudo il menu
+        setIsMenuOpen(false);
+      }
+      return next;
+    });
+  };
 
-  const hideMobileLogo = isMenuOpen || isCartOpen
-  const mobileLogoClasses =
-    "absolute left-1/2 -translate-x-1/2 transition-opacity duration-150 " +
-    (hideMobileLogo ? "opacity-0 pointer-events-none" : "opacity-100")
+  // Logo sempre visibile: rimosso il toggle di opacità
+  const mobileLogoClasses = "absolute left-1/2 -translate-x-1/2 transition-opacity duration-150 opacity-100";
 
   return (
     <header className={`w-full flex items-center justify-between fixed top-0 left-0 right-0 bg-transparent py-3 z-50 ${SITE_PADDING}`}>
@@ -51,20 +80,20 @@ export default function Header() {
       <div className="relative flex w-full items-center justify-between md:hidden py-1.5">
         <MobileMenu
             isOpen={isMenuOpen}
-            setIsOpen={setIsMenuOpen}
+            setIsOpen={setMenuOpenExclusive}
             buttonRef={menuButtonRef}
             boxRef={menuBoxRef}
             isActive={isActive}
         />
 
-        {/* Logo mobile centrato che scompare quando menu o cart aperti */}
+        {/* Logo mobile centrato sempre visibile */}
         <Link href="/" aria-label="Home" className={mobileLogoClasses}>
           <Logo className="h-11 w-auto" />
         </Link>
 
         <MobileCart
           isOpen={isCartOpen}
-          setIsOpen={setIsCartOpen}
+          setIsOpen={setCartOpenExclusive} 
           buttonRef={mobileCartButtonRef}
           boxRef={mobileCartBoxRef}
         />
@@ -72,7 +101,7 @@ export default function Header() {
 
       {/* DESKTOP */}
       <div className="hidden md:flex w-full items-center justify-between">
-        <Link href="/" aria-label="Home" className="shrink-0">
+        <Link href="/" aria-label="Home" className="shrink-0 transition-transform duration-700 ease-in-out hover:rotate-180">
           <Logo className="h-14 w-auto transition-transform hover:scale-105" />
         </Link>
 
@@ -84,7 +113,7 @@ export default function Header() {
 
         <DesktopCart
           isOpen={isCartOpen}
-          setIsOpen={setIsCartOpen}
+          setIsOpen={setIsCartOpen} 
           buttonRef={desktopCartButtonRef}
           boxRef={desktopCartBoxRef}
         />

@@ -24,10 +24,20 @@ export default function DesktopCart({ isOpen, setIsOpen, buttonRef, boxRef }: De
       <button
         ref={buttonRef}
         aria-label={isOpen ? "Close cart" : "Open cart"}
-        className="mr-2 transition-transform hover:scale-105 relative z-[110]"
+        className="mr-2 group relative z-[110] focus:outline-none"
         onClick={() => setIsOpen(!isOpen)}
       >
-        {isOpen ? <CloseIcon size={28} /> : <Cart size={28} />}
+        {isOpen ? (
+          <CloseIcon 
+            size={28} 
+            className="transition-all duration-500 ease-in-out group-hover:scale-105 group-hover:rotate-90" 
+          />
+        ) : (
+          <Cart 
+            size={28} 
+            className="transition-all duration-500 ease-in-out group-hover:scale-105 group-hover:rotate-12" 
+          />
+        )}
       </button>
 
       {!warmed && (
