@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react"
-import GlassCard from "@/components/GlassCard"
+import GlassCard from "@/components/cards/GlassCard"
 import Burger from "@/components/icons/Burger"
 import CloseIcon from "@/components/icons/CloseIcon"
 import NavigationLinks from "./NavigationLinks"

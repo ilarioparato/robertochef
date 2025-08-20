@@ -1,6 +1,6 @@
 "use client"
 import Link from "next/link"
-import GlassCard from "@/components/GlassCard"
+import GlassCard from "@/components/cards/GlassCard"
 
 export default function NotFound() {
   return (

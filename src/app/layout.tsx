@@ -78,8 +78,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" className={`${inter.variable}`} >
       <body className={`${inter.className} antialiased`}>
         <SpeedInsights/>
-        <Header/>
         <ScrollToTop />
+        <Header/>
         <main>
           {children}
         </main>

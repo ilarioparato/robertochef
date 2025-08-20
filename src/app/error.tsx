@@ -1,5 +1,5 @@
 "use client"
-import GlassCard from "@/components/GlassCard"
+import GlassCard from "@/components/cards/GlassCard"
 
 export default function GlobalError({
   reset,

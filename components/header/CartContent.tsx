@@ -1,6 +1,6 @@
 import React from "react"
 import Link from "next/link"
-import GlassCard from "@/components/GlassCard"
+import GlassCard from "@/components/cards/GlassCard"
 
 interface CartContentProps {
   variant: "mobile" | "desktop"

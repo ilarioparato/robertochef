@@ -1,0 +1,1 @@
+export type TabId = 'story' | 'experience' | 'feedback';
